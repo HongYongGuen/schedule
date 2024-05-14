@@ -11,7 +11,6 @@ public class ScheduleResponseDto {
     private String title;
     private String description;
     private String assignee;
-    private String password;
     private LocalDateTime creationDate;
 
     public ScheduleResponseDto(Schedule schedule) {
@@ -19,7 +18,6 @@ public class ScheduleResponseDto {
         this.title = schedule.getTitle();
         this.description = schedule.getDescription();
         this.assignee = schedule.getAssignee();
-        this.password = schedule.getPassword();
         this.creationDate = schedule.getCreationDate();
     }
 }
