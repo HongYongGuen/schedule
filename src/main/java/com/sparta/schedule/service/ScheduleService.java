@@ -24,7 +24,7 @@ public class ScheduleService {
     }
 
     public List<ScheduleResponseDto> getSchedules() {
-        return scheduleRepository.findAll().stream().map(ScheduleResponseDto::new).toList();
+        return scheduleRepository.findAllByOrderByCreationDateDesc().stream().map(ScheduleResponseDto::new).toList();
     }
 
     public ScheduleResponseDto getSchedule(Long id) {
@@ -33,7 +33,13 @@ public class ScheduleService {
     }
 
     public Long updateSchedule(Long id, ScheduleRequestDto scheduleRequestDto) {
-        return null;
+        Schedule schedule = findScheduleById(id);
+        if(schedule.getPassword().equals(scheduleRequestDto.getPassword())){
+             schedule.update(scheduleRequestDto);
+            //임시
+            return null;
+        }
+        else throw new IllegalArgumentException("비밀 번호가 일치 하지 않습니다.");
     }
 
     public Long deleteSchedule(Long id) {
