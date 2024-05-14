@@ -28,12 +28,8 @@ public class ScheduleService {
     }
 
     public ScheduleResponseDto getSchedule(Long id) {
-        Optional<Schedule> result = scheduleRepository.findById(id);
-        if(result.isPresent()) {
-            Schedule schedule = result.get();
-            return new ScheduleResponseDto(schedule);
-        }
-        else return null;
+        Schedule schedule = findScheduleById(id);
+        return new ScheduleResponseDto(schedule);
     }
 
     public Long updateSchedule(Long id, ScheduleRequestDto scheduleRequestDto) {
@@ -42,5 +38,9 @@ public class ScheduleService {
 
     public Long deleteSchedule(Long id) {
         return null;
+    }
+
+    private Schedule findScheduleById(Long id) {
+        return scheduleRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("찾는 일정이 존재하지 않습니다."));
     }
 }
