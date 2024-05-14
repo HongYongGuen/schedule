@@ -5,6 +5,7 @@ import com.sparta.schedule.dto.ScheduleResponseDto;
 import com.sparta.schedule.entity.Schedule;
 import com.sparta.schedule.repository.ScheduleRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,13 +32,13 @@ public class ScheduleService {
         Schedule schedule = findScheduleById(id);
         return new ScheduleResponseDto(schedule);
     }
-
-    public Long updateSchedule(Long id, ScheduleRequestDto scheduleRequestDto) {
+    @Transactional
+    public ScheduleResponseDto updateSchedule(Long id, ScheduleRequestDto scheduleRequestDto) {
         Schedule schedule = findScheduleById(id);
         if(schedule.getPassword().equals(scheduleRequestDto.getPassword())){
-             schedule.update(scheduleRequestDto);
-            //임시
-            return null;
+            schedule.update(scheduleRequestDto);
+            return new ScheduleResponseDto(schedule);
+
         }
         else throw new IllegalArgumentException("비밀 번호가 일치 하지 않습니다.");
     }
