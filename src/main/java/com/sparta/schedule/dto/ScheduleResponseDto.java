@@ -1,11 +1,11 @@
 package com.sparta.schedule.dto;
 
 import com.sparta.schedule.entity.Schedule;
-import jakarta.persistence.Column;
+import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-
+@Getter
 public class ScheduleResponseDto {
     private Long id;
     private String title;
@@ -13,7 +13,6 @@ public class ScheduleResponseDto {
     private String assignee;
     private String password;
     private LocalDateTime creationDate;
-    //private LocalDateTime modifiedAt;
 
     public ScheduleResponseDto(Schedule schedule) {
         this.id = schedule.getId();
