@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ScheduleService {
@@ -43,8 +42,14 @@ public class ScheduleService {
         else throw new IllegalArgumentException("비밀 번호가 일치 하지 않습니다.");
     }
 
-    public Long deleteSchedule(Long id) {
-        return null;
+    public Long deleteSchedule(Long id, String password) {
+        Schedule schedule = findScheduleById(id);
+        if(schedule.getPassword().equals(password)){
+            scheduleRepository.delete(schedule);
+            return id;
+
+        }
+        else throw new IllegalArgumentException("비밀 번호가 일치 하지 않습니다.");
     }
 
     private Schedule findScheduleById(Long id) {
