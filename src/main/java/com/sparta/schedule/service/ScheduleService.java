@@ -7,6 +7,7 @@ import com.sparta.schedule.repository.ScheduleRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ScheduleService {
@@ -27,7 +28,12 @@ public class ScheduleService {
     }
 
     public ScheduleResponseDto getSchedule(Long id) {
-        return null;
+        Optional<Schedule> result = scheduleRepository.findById(id);
+        if(result.isPresent()) {
+            Schedule schedule = result.get();
+            return new ScheduleResponseDto(schedule);
+        }
+        else return null;
     }
 
     public Long updateSchedule(Long id, ScheduleRequestDto scheduleRequestDto) {
