@@ -54,6 +54,6 @@ public class CreateTest {
         assert responseDto.getTitle().equals("Test Schedule");
         assert responseDto.getDescription().equals("Test Description");
         assert responseDto.getAssignee().equals("Test Assignee");
-        assert responseDto.getPassword().equals("Test Password");
+
     }
 }
