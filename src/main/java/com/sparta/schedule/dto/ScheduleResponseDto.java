@@ -3,7 +3,6 @@ package com.sparta.schedule.dto;
 import com.sparta.schedule.entity.Schedule;
 import lombok.Getter;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 @Getter
 public class ScheduleResponseDto {
