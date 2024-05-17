@@ -2,22 +2,35 @@ package com.sparta.schedule.service;
 
 import com.sparta.schedule.dto.ScheduleRequestDto;
 import com.sparta.schedule.dto.ScheduleResponseDto;
+import com.sparta.schedule.entity.File;
 import com.sparta.schedule.entity.Schedule;
+import com.sparta.schedule.exception.FileException;
 import com.sparta.schedule.exception.PasswordMismatchException;
 import com.sparta.schedule.exception.ScheduleAlreadyDeletedException;
 import com.sparta.schedule.exception.ScheduleNotFoundException;
+import com.sparta.schedule.repository.FileRepository;
 import com.sparta.schedule.repository.ScheduleRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
-    public ScheduleService(ScheduleRepository scheduleRepository) {
+    private final FileRepository fileRepository;
+
+    public ScheduleService(ScheduleRepository scheduleRepository,
+                           FileRepository fileRepository) {
         this.scheduleRepository = scheduleRepository;
+        this.fileRepository = fileRepository;
     }
     public ScheduleResponseDto createSchedule(ScheduleRequestDto scheduleRequestDto) {
         Schedule schedule = new Schedule(scheduleRequestDto);
@@ -53,6 +66,23 @@ public class ScheduleService {
                 throw new PasswordMismatchException("비밀번호가 일치하지 않습니다.");
             }
             scheduleRepository.delete(schedule);
+            Long fileId = schedule.getFileId();
+            if(fileId != null) {
+                Optional<File> fileOptional = fileRepository.findByFileId(fileId);
+                if (fileOptional.isPresent()) {
+                    File file = fileOptional.get();
+                    Path filePath = Paths.get(file.getFilePath());
+                    try {
+                        Files.deleteIfExists(filePath);
+                    } catch (IOException e) {
+                        throw new FileException("파일 삭제 중 오류가 발생했습니다.");
+                    }
+                }
+                fileRepository.deleteById(schedule.getFileId());
+            }
+
+
+
         });
         return optionalSchedule.map(Schedule::getId).orElseThrow(() -> new ScheduleAlreadyDeletedException("이미 삭제된 일정입니다."));
     }
@@ -63,10 +93,12 @@ public class ScheduleService {
 
     }
 
-    private Optional<Schedule> findScheduleById(Long id) {
+    public Optional<Schedule> findScheduleById(Long id) {
         Optional<Schedule> result = scheduleRepository.findFirstByOrderByIdDesc();
         if(result.isEmpty()) throw new ScheduleNotFoundException("일정이 하나도 없습니다.");
         if(result.get().getId() < id) throw new ScheduleNotFoundException("입력된 일정 범위를 벗어 났습니다.");
         return scheduleRepository.findById(id);
     }
+
+
 }

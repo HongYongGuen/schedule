@@ -42,7 +42,6 @@ ScheduleController {
     @PutMapping("/schedules/{id}")
     @Operation(summary = "특정 일정 수정", description = "사용자가 특정 일정 수정할 때 사용하는 API")
     public ScheduleResponseDto updateSchedule(@PathVariable Long id, @Valid @RequestBody ScheduleRequestDto scheduleRequestDto) {
-
         return scheduleService.updateSchedule(id, scheduleRequestDto);
     }
     @DeleteMapping("/schedules/{id}/param")

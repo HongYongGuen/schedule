@@ -18,10 +18,13 @@ public class Schedule extends Timestamped {
     private String title;
     @Column(name = "description", nullable = false, length = 500)
     private String description;
-    @Column(name = "assignee", nullable = false)
+    @Column(name = "assignee")
     private String assignee;
     @Column(name = "password", nullable = false)
     private String password;
+    @Column(name = "FileId")
+    private Long fileId;
+
 
     public Schedule(ScheduleRequestDto scheduleRequestDto) {
         this.title = scheduleRequestDto.getTitle();
@@ -34,5 +37,9 @@ public class Schedule extends Timestamped {
         this.title = scheduleRequestDto.getTitle();
         this.description = scheduleRequestDto.getDescription();
         this.assignee = scheduleRequestDto.getAssignee();
+
+    }
+    public void updateFileId(Long fileId) {
+        this.fileId = fileId;
     }
 }
