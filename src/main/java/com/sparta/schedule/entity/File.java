@@ -23,8 +23,8 @@ public class File {
     private long fileSize;
 
     public File(String fileName, String filePath, long fileSize) {
-        this.fileName = fileName;
-        this.filePath = filePath;
-        this.fileSize = fileSize;
+       this.fileName = fileName;
+       this.filePath = filePath;
+       this.fileSize = fileSize;
     }
 }

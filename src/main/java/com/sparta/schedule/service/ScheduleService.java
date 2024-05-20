@@ -12,13 +12,11 @@ import com.sparta.schedule.repository.FileRepository;
 import com.sparta.schedule.repository.ScheduleRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,47 +49,46 @@ public class ScheduleService {
     public ScheduleResponseDto updateSchedule(Long id, ScheduleRequestDto scheduleRequestDto) {
         Optional<Schedule> optionalSchedule = findScheduleById(id);
         optionalSchedule.ifPresent(schedule -> {
-            if (!checkPassword(schedule, scheduleRequestDto.getPassword())) {
+            if (!schedule.checkPassword(scheduleRequestDto.getPassword())) {
                 throw new PasswordMismatchException("비밀번호가 일치하지 않습니다.");
             }
             schedule.update(scheduleRequestDto);
         });
+
         return optionalSchedule.map(ScheduleResponseDto::new).orElseThrow(() -> new ScheduleAlreadyDeletedException("이미 삭제된 일정입니다"));
     }
 
     public Long deleteSchedule(Long id, String password) {
         Optional<Schedule> optionalSchedule = findScheduleById(id);
         optionalSchedule.ifPresent(schedule -> {
-            if (!checkPassword(schedule, password)) {
+            if (!schedule.checkPassword(password)) {
                 throw new PasswordMismatchException("비밀번호가 일치하지 않습니다.");
             }
             scheduleRepository.delete(schedule);
             Long fileId = schedule.getFileId();
-            if(fileId != null) {
-                Optional<File> fileOptional = fileRepository.findByFileId(fileId);
-                if (fileOptional.isPresent()) {
-                    File file = fileOptional.get();
-                    Path filePath = Paths.get(file.getFilePath());
-                    try {
-                        Files.deleteIfExists(filePath);
-                    } catch (IOException e) {
-                        throw new FileException("파일 삭제 중 오류가 발생했습니다.");
-                    }
-                }
-                fileRepository.deleteById(schedule.getFileId());
-            }
-
-
-
+            delteFile(fileId);
         });
         return optionalSchedule.map(Schedule::getId).orElseThrow(() -> new ScheduleAlreadyDeletedException("이미 삭제된 일정입니다."));
     }
-
-
-    private boolean checkPassword(Schedule schedule, String password) {
-        return schedule.getPassword().equals(password);
-
+    private void delteFile(Long fileId) {
+        if(fileId != null) {
+            Optional<File> fileOptional = fileRepository.findByFileId(fileId);
+            if (fileOptional.isPresent()) {
+                File file = fileOptional.get();
+                Path filePath = Paths.get(file.getFilePath());
+                try {
+                    Files.deleteIfExists(filePath);
+                } catch (IOException e) {
+                    throw new FileException("파일 삭제 중 오류가 발생했습니다.");
+                }
+            }
+            fileRepository.deleteById(fileId);
+        }else throw new FileException("해당 일정엔 파일이 등록되어 있지 않습니다.");
     }
+
+
+
+
 
     public Optional<Schedule> findScheduleById(Long id) {
         Optional<Schedule> result = scheduleRepository.findFirstByOrderByIdDesc();

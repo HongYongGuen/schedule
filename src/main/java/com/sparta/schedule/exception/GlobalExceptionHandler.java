@@ -16,6 +16,7 @@ public class GlobalExceptionHandler {
     }
     @ExceptionHandler(PasswordMismatchException.class)
     public ResponseEntity<String> handlePasswordMismatchException(PasswordMismatchException ex) {
+
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
     }
     @ExceptionHandler(ScheduleNotFoundException.class)
