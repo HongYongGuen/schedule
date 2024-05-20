@@ -42,4 +42,9 @@ public class Schedule extends Timestamped {
     public void updateFileId(Long fileId) {
         this.fileId = fileId;
     }
+
+    public boolean checkPassword(String password) {
+        return this.password.equals(password);
+
+    }
 }

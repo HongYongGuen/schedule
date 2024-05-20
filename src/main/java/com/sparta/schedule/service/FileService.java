@@ -47,18 +47,8 @@ public class FileService {
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
             }
-            String fileName = file.getOriginalFilename();
-            String filePath = uploadPath.resolve(fileName).toString();
-            Files.write(Paths.get(filePath), file.getBytes());
-
-
-            List<String> imageExtensions = List.of(".jpg", ".png", ".jpeg", ".gif");
-            String extension = fileName.substring(fileName.lastIndexOf("."));
-            if (!imageExtensions.contains(extension)) {
-                throw new IllegalArgumentException("파일이 jpg, png, jpeg, gif 형식이어야 합니다.");
-            }
-            File savedFile = new File(fileName,filePath, file.getSize());
-            savedFile = fileRepository.save(savedFile);
+            File savedFile = savedFile(file,uploadPath);
+            // 해당 일정에 파일 연결
             result.get().setFileId(savedFile.getFileId());
             scheduleRepository.save(result.get());
             return new FileResponseDto(savedFile);
@@ -66,17 +56,33 @@ public class FileService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
 
+    private File savedFile(MultipartFile file,  Path uploadPath) throws IOException {
+        String fileName = file.getOriginalFilename();
+        String filePath = uploadPath.resolve(fileName).toString();
+        Files.write(Paths.get(filePath), file.getBytes());
+        // 파일이 jpg, png, jpeg, gif 형식이어야 합니다.
+        if (!isImageFile(fileName)) throw new FileException("파일이 jpg, png, jpeg, gif 형식이어야 합니다.");
+        //파일 객체 생성 저장
+        File saveFile = new File(fileName, filePath, file.getSize());
+        fileRepository.save(saveFile);
+        return saveFile;
+    }
+
+    private boolean isImageFile(String fileName) {
+        List<String> imageExtensions = List.of(".jpg", ".png", ".jpeg", ".gif");
+        String extension = fileName.substring(fileName.lastIndexOf("."));
+        return imageExtensions.contains(extension);
     }
 
 
-        public ResponseEntity<Resource> downloadFile(Long scheduleId) throws FileNotFoundException {
+    public Resource downloadFile(Long scheduleId) throws FileNotFoundException {
             Optional<Schedule> scheduleOptional = scheduleService.findScheduleById(scheduleId);
             if (scheduleOptional.isEmpty()) {
                 throw new ScheduleNotFoundException("일정을 찾을 수 없습니다.");
             }
-
-            // 해당 스케줄에 속한 파일 중 가장 최신 파일을 가져옵니다. (예시)
+            // 해당 스케줄에 속한 파일 중 가장 최신 파일을 가져옵니다.
             Optional<File> fileOptional = fileRepository.findByFileId(scheduleOptional.get().getFileId());
             if (fileOptional.isEmpty()) {
                 throw new FileNotFoundException("파일을 찾을 수 없습니다.");
@@ -87,13 +93,10 @@ public class FileService {
             ByteArrayResource resource = null;
             try {
                 resource = new ByteArrayResource(Files.readAllBytes(path));
+                return resource;
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-            return ResponseEntity.ok()
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFileName() + "\"")
-                    .body(resource);
+            return resource;
     }
 }
