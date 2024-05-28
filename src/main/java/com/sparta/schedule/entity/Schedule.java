@@ -5,6 +5,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -24,6 +27,8 @@ public class Schedule extends Timestamped {
     private String password;
     @Column(name = "FileId")
     private Long fileId;
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments;
 
 
     public Schedule(ScheduleRequestDto scheduleRequestDto) {
