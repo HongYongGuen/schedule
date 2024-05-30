@@ -65,7 +65,7 @@ public class CommentsService {
 
         Comments comments = commentsRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException("commentId가 존재하지 않습니다."));
 
-        if(commentsRequestDto.getUserId()!=comments.getUserId()) throw new UnauthorizedException("사용자가 댓글을 삭제할 권한이 없습니다.");
+        if(!commentsRequestDto.getUserId().equals(comments.getUserId())) throw new UnauthorizedException("사용자가 댓글을 삭제할 권한이 없습니다.");
 
         comments.update(commentsRequestDto);
 
@@ -88,11 +88,11 @@ public class CommentsService {
 
         Comments comments = commentsRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException("commentId가 존재하지 않습니다."));
 
-        if(userId!=comments.getUserId()) throw new UnauthorizedException("사용자가 댓글을 삭제할 권한이 없습니다.");
+        if(!userId.equals(comments.getUserId())) throw new UnauthorizedException("사용자가 댓글을 삭제할 권한이 없습니다.");
 
-        Schedule schedule = result.get();
-        schedule.removeComments(comments);
-        scheduleRepository.save(schedule);
+//        Schedule schedule = result.get();
+//        schedule.removeComments(comments);
+//        scheduleRepository.save(schedule);
         commentsRepository.delete(comments);
         return commentId;
     }

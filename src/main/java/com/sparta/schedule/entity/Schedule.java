@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.Hibernate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +63,7 @@ public class Schedule extends Timestamped {
     }
 
     public void removeComments(Comments comments) {
+        Hibernate.initialize(comments);
         this.comments.remove(comments);
         comments.setSchedule(null);
     }
