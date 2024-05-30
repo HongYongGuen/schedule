@@ -22,4 +22,10 @@ public class CommentsController {
     public CommentsResponseDto addComment(@PathVariable("id") Long scheduleId, @RequestBody CommentsRequestDto commentsRequestDto) {
         return commentService.addComment(scheduleId, commentsRequestDto);
     }
+
+    @PutMapping("/schedules/{id}/comments/{commentId}")
+    @Operation(summary = "파일 등록", description = "사용자에게 파일 등록할 때 사용하는 API")
+    public CommentsResponseDto updateComment(@PathVariable("id") Long scheduleId, @PathVariable("commentId") Long commentId, @RequestBody CommentsRequestDto commentsRequestDto) {
+        return commentService.updateComment(scheduleId, commentId, commentsRequestDto);
+    }
 }
