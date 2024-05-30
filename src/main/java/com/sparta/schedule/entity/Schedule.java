@@ -5,6 +5,11 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.Hibernate;
+
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -25,12 +30,16 @@ public class Schedule extends Timestamped {
     @Column(name = "FileId")
     private Long fileId;
 
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Comments> comments;
+
 
     public Schedule(ScheduleRequestDto scheduleRequestDto) {
         this.title = scheduleRequestDto.getTitle();
         this.description = scheduleRequestDto.getDescription();
         this.assignee = scheduleRequestDto.getAssignee();
         this.password = scheduleRequestDto.getPassword();
+        this.comments = new ArrayList<>();
     }
 
     public void update(ScheduleRequestDto scheduleRequestDto) {
@@ -46,5 +55,16 @@ public class Schedule extends Timestamped {
     public boolean checkPassword(String password) {
         return this.password.equals(password);
 
+    }
+
+    public void addComments(Comments comments) {
+        this.comments.add(comments);
+        comments.setSchedule(this);
+    }
+
+    public void removeComments(Comments comments) {
+        Hibernate.initialize(comments);
+        this.comments.remove(comments);
+        comments.setSchedule(null);
     }
 }
