@@ -58,4 +58,9 @@ public class Schedule extends Timestamped {
         this.comments.add(comments);
         comments.setSchedule(this);
     }
+
+    public void removeComments(Comments comments) {
+        this.comments.remove(comments);
+        comments.setSchedule(null);
+    }
 }
