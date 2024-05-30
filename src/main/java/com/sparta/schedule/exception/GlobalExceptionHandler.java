@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.FileNotFoundException;
+
 @ControllerAdvice
 @RestController
 public class GlobalExceptionHandler {
@@ -27,5 +29,23 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleScheduleAlreadyDeletedException(ScheduleAlreadyDeletedException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
+
+    @ExceptionHandler(FileException.class)
+    public ResponseEntity<String> handleFileException(FileException ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+    }
+
+
+    @ExceptionHandler(FileNotFoundException.class)
+    public ResponseEntity<String> handleFileNotFoundException(FileNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(SchedulesaveException.class)
+    public ResponseEntity<String> handleSchedulesaveException(SchedulesaveException ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+    }
+
+
 }
 

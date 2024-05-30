@@ -27,8 +27,9 @@ public class Schedule extends Timestamped {
     private String password;
     @Column(name = "FileId")
     private Long fileId;
+
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comment> comments;
+    private List<Comments> comments;
 
 
     public Schedule(ScheduleRequestDto scheduleRequestDto) {
@@ -51,5 +52,10 @@ public class Schedule extends Timestamped {
     public boolean checkPassword(String password) {
         return this.password.equals(password);
 
+    }
+
+    public void addComments(Comments comments) {
+        this.comments.add(comments);
+        comments.setSchedule(this);
     }
 }
