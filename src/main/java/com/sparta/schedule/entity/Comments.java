@@ -3,11 +3,14 @@ package com.sparta.schedule.entity;
 import com.sparta.schedule.dto.CommentsRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
+@Table(name = "comments")
+@NoArgsConstructor
 public class Comments extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

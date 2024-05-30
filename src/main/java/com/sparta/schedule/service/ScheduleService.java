@@ -10,6 +10,7 @@ import com.sparta.schedule.exception.ScheduleAlreadyDeletedException;
 import com.sparta.schedule.exception.ScheduleNotFoundException;
 import com.sparta.schedule.repository.FileRepository;
 import com.sparta.schedule.repository.ScheduleRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,8 +26,8 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final FileRepository fileRepository;
 
-    public ScheduleService(ScheduleRepository scheduleRepository,
-                           FileRepository fileRepository) {
+    @Autowired
+    public ScheduleService(ScheduleRepository scheduleRepository, FileRepository fileRepository) {
         this.scheduleRepository = scheduleRepository;
         this.fileRepository = fileRepository;
     }
@@ -89,7 +90,7 @@ public class ScheduleService {
 
 
 
-
+    @Transactional(readOnly = true)
     public Optional<Schedule> findScheduleById(Long id) {
         Optional<Schedule> result = scheduleRepository.findFirstByOrderByIdDesc();
         if(result.isEmpty()) throw new ScheduleNotFoundException("일정이 하나도 없습니다.");

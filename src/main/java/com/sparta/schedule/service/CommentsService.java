@@ -9,7 +9,9 @@ import com.sparta.schedule.exception.SchedulesaveException;
 import com.sparta.schedule.exception.UnauthorizedException;
 import com.sparta.schedule.repository.CommentsRepository;
 import com.sparta.schedule.repository.ScheduleRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -18,6 +20,15 @@ public class CommentsService {
     ScheduleService scheduleService;
     ScheduleRepository scheduleRepository;
     CommentsRepository commentsRepository;
+
+    @Autowired
+    public CommentsService(ScheduleService scheduleService, ScheduleRepository scheduleRepository, CommentsRepository commentsRepository) {
+        this.scheduleService = scheduleService;
+        this.scheduleRepository = scheduleRepository;
+        this.commentsRepository = commentsRepository;
+    }
+
+    @Transactional
     public CommentsResponseDto addComment(Long scheduleId, CommentsRequestDto commentsRequestDto) {
 
         Optional<Schedule> result = scheduleService.findScheduleById(scheduleId);
@@ -26,14 +37,19 @@ public class CommentsService {
         Schedule schedule = result.get();
 
         Comments comments = new Comments(commentsRequestDto);
+
         schedule.addComments(comments);
-        scheduleRepository.save(schedule);
+
+
 
         try {
+            scheduleRepository.save(schedule);
             commentsRepository.save(comments);
+
         } catch (Exception e) {
             throw new SchedulesaveException("Failed to save schedule");
         }
+
 
         return new CommentsResponseDto(comments);
 

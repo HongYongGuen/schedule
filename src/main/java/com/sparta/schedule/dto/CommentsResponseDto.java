@@ -1,9 +1,11 @@
 package com.sparta.schedule.dto;
 
 import com.sparta.schedule.entity.Comments;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
+@Getter
 public class CommentsResponseDto {
     private Long id;
     private String content;

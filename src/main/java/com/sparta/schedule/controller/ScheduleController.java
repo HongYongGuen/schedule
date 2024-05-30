@@ -23,6 +23,7 @@ ScheduleController {
     public ScheduleController(ScheduleService scheduleService) {
         this.scheduleService = scheduleService;
     }
+
     @PostMapping("/schedules")
     @Operation(summary = "일정 등록", description = "사용자가 일정 등록할 때 사용하는 API")
     public ScheduleResponseDto createSchedule(@Valid @RequestBody ScheduleRequestDto scheduleRequestDto) {
@@ -34,16 +35,19 @@ ScheduleController {
     public List<ScheduleResponseDto> getSchedules() {
         return scheduleService.getSchedules();
     }
+
     @GetMapping("/schedules/{id}")
     @Operation(summary = "특정 일정 조회", description = "사용자가 특정 일정 조회할 때 사용하는 API")
     public ScheduleResponseDto getSchedule(@PathVariable Long id) {
         return scheduleService.getSchedule(id);
     }
+
     @PutMapping("/schedules/{id}")
     @Operation(summary = "특정 일정 수정", description = "사용자가 특정 일정 수정할 때 사용하는 API")
     public ScheduleResponseDto updateSchedule(@PathVariable Long id, @Valid @RequestBody ScheduleRequestDto scheduleRequestDto) {
         return scheduleService.updateSchedule(id, scheduleRequestDto);
     }
+
     @DeleteMapping("/schedules/{id}/param")
     @Operation(summary = "특정 일정 삭제", description = "사용자가 특정 일정 삭제할 때 사용하는 API")
     public Long deleteSchedule(@PathVariable Long id, @NotBlank @RequestParam String password) {

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -28,7 +29,7 @@ public class Schedule extends Timestamped {
     @Column(name = "FileId")
     private Long fileId;
 
-    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Comments> comments;
 
 
@@ -37,6 +38,7 @@ public class Schedule extends Timestamped {
         this.description = scheduleRequestDto.getDescription();
         this.assignee = scheduleRequestDto.getAssignee();
         this.password = scheduleRequestDto.getPassword();
+        this.comments = new ArrayList<>();
     }
 
     public void update(ScheduleRequestDto scheduleRequestDto) {
