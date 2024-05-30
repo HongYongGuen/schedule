@@ -23,8 +23,6 @@ public class CommentsService {
         Optional<Schedule> result = scheduleService.findScheduleById(scheduleId);
         if (result.isEmpty()) throw new ScheduleNotFoundException("선택된 일정이 없습니다.");
 
-        if(commentsRequestDto.getContent()==null) throw new IllegalArgumentException("content가 비어있다.");
-
         Schedule schedule = result.get();
 
         Comments comments = new Comments(commentsRequestDto);

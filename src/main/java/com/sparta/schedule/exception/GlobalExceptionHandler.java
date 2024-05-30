@@ -21,6 +21,7 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
     }
+
     @ExceptionHandler(ScheduleNotFoundException.class)
     public ResponseEntity<String> handleScheduleNotFoundException(ScheduleNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
